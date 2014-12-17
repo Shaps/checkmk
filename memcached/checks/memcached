@@ -28,7 +28,7 @@ def json_to_obj(info):
     str = "".join(info[0])
     obj = json.loads(str)
     return obj
-    
+
 def inventory_memcached(checkname, info):
     if len(info) > 0:
         if checkname == "memcached.size":
@@ -46,25 +46,25 @@ def check_memcached(item, params, info):
     # currently only supported for localhost
     localhost = data["127.0.0.1:11211"]
 
-    if(item == "memcached.hits"):
+    if(item == "memcached.size"):
         r = ratio(localhost["bytes"],localhost["limit_maxbytes"])
 
         if r > crit:
             return(2, "Critical - Current memory usage: %d%%" % r)
         elif r > warn:
-            return(1, "Warning - Current memory usage: %d%%" % r) 
+            return(1, "Warning - Current memory usage: %d%%" % r)
         else:
             return(0, "OK - Current memory usage: %d%%" % r)
 
-    if(item == "memcached.size"):
+    if(item == "memcached.hits"):
         h = ratio(localhost["get_hits"],localhost["cmd_get"])
 
-        if h > crit:
-            return(2, "Critical - Current memory usage: %d%%" % h)
-        elif h > warn:
-            return(1, "Warning - Current memory usage: %d%%" % h) 
+        if h < crit:
+            return(2, "Critical - Current cache hits: %d%%" % h)
+        elif h < warn:
+            return(1, "Warning - Current cache hits: %d%%" % h)
         else:
-            return(0, "OK - Current memory usage: %d%%" % h)
+            return(0, "OK - Current cache hits: %d%%" % h)
 
 
     return (3, "Undefined check item (%s), please check the memcached plugin source code. :-)" % item)
